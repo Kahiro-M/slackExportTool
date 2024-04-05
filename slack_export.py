@@ -125,7 +125,7 @@ def main(
     users = {user["id"]: user for user in client.fetch_users()}
     # users.json(Slack公式エクスポートと同形式)を生成
     output_path = f"{output_dir / 'users'}.{output_format}"
-    with open(output_path, "w", encoding='utf-8_sig') as f:
+    with open(output_path, "w", encoding='utf-8') as f:
         if output_format == "json":
             json.dump(
                 list(users.values()),
@@ -144,7 +144,7 @@ def main(
     channels = client.fetch_channels()
     # channels.json(Slack公式エクスポートと同形式)を生成
     output_path = f"{output_dir / 'channels'}.{output_format}"
-    with open(output_path, "w", encoding='utf-8_sig') as f:
+    with open(output_path, "w", encoding='utf-8') as f:
         if output_format == "json":
             json.dump(
                 channels,
@@ -186,7 +186,7 @@ def main(
         channel_dir = f"{output_dir / channel_name}"
         Path(channel_dir).mkdir(exist_ok=True)
         output_path = f"{output_dir / channel_name / now_str}.{output_format}"
-        with open(output_path, "w", encoding='utf-8_sig') as f:
+        with open(output_path, "w", encoding='utf-8') as f:
             if output_format == "json":
                 json.dump(
                     messages_and_replies,
