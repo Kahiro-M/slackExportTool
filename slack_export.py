@@ -213,3 +213,6 @@ if __name__ == "__main__":
 
     main(args.token, Path(args.output_dir), args.output_format)
     shutil.make_archive(args.output_dir, format='zip', root_dir=args.output_dir)
+    zip_path = f'{args.output_dir}.zip'
+    if(Path(zip_path).exists()):
+        shutil.rmtree(args.output_dir)
