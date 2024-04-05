@@ -11,6 +11,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 import datetime
+import shutil
 
 class Client:
     def __init__(self, token) -> None:
@@ -211,3 +212,4 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     main(args.token, Path(args.output_dir), args.output_format)
+    shutil.make_archive(args.output_dir, format='zip', root_dir=args.output_dir)
