@@ -45,7 +45,8 @@ class Client:
         response = self._call(
             "https://slack.com/api/conversations.list",
             params={
-                "types": "public_channel,private_channel,mpim,im",
+                # "types": "public_channel,private_channel,mpim,im",
+                "types": "public_channel,private_channel",
                 "exclude_archived": True,
             },
         )
@@ -147,7 +148,7 @@ def main(
         logger.info(f"{len(messages_and_replies)} messages/replies fetched")
 
         output_path = f"{output_dir / channel_name}.{output_format}"
-        with open(output_path, "w") as f:
+        with open(output_path, "w", encoding='utf-8_sig') as f:
             if output_format == "json":
                 json.dump(
                     messages_and_replies,
