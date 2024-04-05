@@ -10,6 +10,7 @@ from urllib3.util.retry import Retry
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+import datetime
 
 class Client:
     def __init__(self, token) -> None:
@@ -116,17 +117,51 @@ def main(
         output_dir (Path): エクスポートしたデータの保存先ディレクトリ
         output_format (Literal["json", "jsonl"], optional): 保存するときのファイル形式
     """
-    output_dir.mkdir(exist_ok=False)
+    output_dir.mkdir(exist_ok=True)
 
     client = Client(token)
 
     logger.info("Fetching users")
     users = {user["id"]: user for user in client.fetch_users()}
+    # users.json(Slack公式エクスポートと同形式)を生成
+    output_path = f"{output_dir / 'users'}.{output_format}"
+    with open(output_path, "w", encoding='utf-8_sig') as f:
+        if output_format == "json":
+            json.dump(
+                list(users.values()),
+                f,
+                indent=4,
+                ensure_ascii=False,
+                sort_keys=True,
+            )
+        elif output_format == "jsonl":
+            for user in users:
+                json.dump(user, f, ensure_ascii=False, sort_keys=True)
+                f.write("\n")
     logger.info(f"{len(users)} users fetched")
 
     logger.info("Fetching channels")
     channels = client.fetch_channels()
+    # channels.json(Slack公式エクスポートと同形式)を生成
+    output_path = f"{output_dir / 'channels'}.{output_format}"
+    with open(output_path, "w", encoding='utf-8_sig') as f:
+        if output_format == "json":
+            json.dump(
+                channels,
+                f,
+                indent=4,
+                ensure_ascii=False,
+                sort_keys=True,
+            )
+        elif output_format == "jsonl":
+            for channel in channels:
+                json.dump(channel, f, ensure_ascii=False, sort_keys=True)
+                f.write("\n")
     logger.info(f"{len(channels)} channels fetched")
+
+    now = datetime.datetime.now()
+    now_str = now.strftime('%Y-%m-%d_%H%M')
+
 
     for channel in channels:
         channel_id = channel["id"]
@@ -147,7 +182,10 @@ def main(
 
         logger.info(f"{len(messages_and_replies)} messages/replies fetched")
 
-        output_path = f"{output_dir / channel_name}.{output_format}"
+        # チャンネル毎にフォルダ作成
+        channel_dir = f"{output_dir / channel_name}"
+        Path(channel_dir).mkdir(exist_ok=True)
+        output_path = f"{output_dir / channel_name / now_str}.{output_format}"
         with open(output_path, "w", encoding='utf-8_sig') as f:
             if output_format == "json":
                 json.dump(
