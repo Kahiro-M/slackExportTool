@@ -14,7 +14,7 @@ import datetime
 import shutil
 
 class Client:
-    def __init__(self, token) -> None:
+    def __init__(self, token) :
         self._token = token
         self._headers = {"Authorization": "Bearer {}".format(token)}
         self._session = requests.Session()
@@ -23,7 +23,7 @@ class Client:
             HTTPAdapter(max_retries=Retry(total=5, backoff_factor=3)),
         )
 
-    def _call(self, url, params=None) -> dict[str, Any]:
+    def _call(self, url, params=None) :
         if not params:
             params = {}
 
@@ -31,7 +31,7 @@ class Client:
         response.raise_for_status()
         return response.json()
 
-    def fetch_users(self) -> list[dict[str, Any]]:
+    def fetch_users(self) :
         """ユーザーをすべて取得する
         References:
             - https://api.slack.com/methods/users.list
@@ -39,7 +39,7 @@ class Client:
         response = self._call("https://slack.com/api/users.list")
         return response["members"]
 
-    def fetch_channels(self) -> list[dict[str, Any]]:
+    def fetch_channels(self) :
         """チャンネルをすべて取得する
         References:
             - https://api.slack.com/methods/conversations.list
@@ -54,7 +54,7 @@ class Client:
         )
         return response["channels"]
 
-    def fetch_messages(self, channel_id: str) -> list[dict[str, Any]]:
+    def fetch_messages(self, channel_id: str) :
         """指定したチャンネルのメッセージ（スレッドを除く）をすべて取得する
         References:
             - https://api.slack.com/methods/conversations.history
@@ -76,7 +76,7 @@ class Client:
 
         return messages
 
-    def fetch_replies(self, channel_id: str, thread_ts: float) -> list[dict[str, Any]]:
+    def fetch_replies(self, channel_id: str, thread_ts: float) :
         """指定したチャンネル・時刻のスレッド内のメッセージをすべて取得する
         References:
             - https://api.slack.com/methods/conversations.replies
@@ -110,7 +110,7 @@ def main(
     token: str,
     output_dir: Path,
     output_format: Literal["json", "jsonl"] = "jsonl",
-) -> None:
+) :
     """Slack のメッセージをエクスポートする
 
     Args:
